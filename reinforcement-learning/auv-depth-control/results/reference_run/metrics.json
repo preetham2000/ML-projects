@@ -1,0 +1,41 @@
+{
+  "provenance": {
+    "description": "Deterministic evaluation of the original university-project saved DDPG and TD3 actor checkpoints.",
+    "training_status": "Historical checkpoint results; the standalone public project did not freshly train these models.",
+    "checkpoint_policy": "The private reference checkpoints are not included in, copied to, or required by the standalone public project."
+  },
+  "evaluation": {
+    "episodes": 1,
+    "steps_per_episode": 2000,
+    "time_step_seconds": 0.1,
+    "start_depth": 2.0,
+    "target_depth": 8.0,
+    "deterministic_actions": true
+  },
+  "metric_definitions": {
+    "total_reward": "Sum of per-step rewards over the rollout.",
+    "final_depth_error": "Absolute target-depth error at the final recorded state.",
+    "maximum_depth_overshoot": "Maximum recorded depth above the target, lower-bounded at zero.",
+    "maximum_absolute_pitch": "Maximum absolute recorded pitch angle.",
+    "squared_action_effort": "Time integral approximation of the sum of squared control actions.",
+    "total_action_variation": "Sum of absolute successive changes across both control actions."
+  },
+  "controllers": {
+    "ddpg": {
+      "total_reward": -4151.0283203125,
+      "final_depth_error": 0.04912567138671875,
+      "maximum_depth_overshoot": 0.4751262664794922,
+      "maximum_absolute_pitch": 0.4188489317893982,
+      "squared_action_effort": 684.71240234375,
+      "total_action_variation": 31.05024528503418
+    },
+    "td3": {
+      "total_reward": -2580.2587890625,
+      "final_depth_error": 0.017194747924804688,
+      "maximum_depth_overshoot": 0.05594825744628906,
+      "maximum_absolute_pitch": 0.6500595808029175,
+      "squared_action_effort": 723.9486694335938,
+      "total_action_variation": 39.32797622680664
+    }
+  }
+}
