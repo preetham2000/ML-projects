@@ -45,7 +45,7 @@ The BMI-only polynomial model is a deliberately restricted univariate experiment
 
 ## Reference comparisons and tests
 
-The custom models remain the primary implementations. Tests compare their behavior with established references while accounting for intentional covariance-normalization differences in LDA and QDA:
+The custom models remain the primary implementations. Tests compare their behavior with established references while checking the covariance-normalization conventions explicitly:
 
 - LDA and QDA predictions against `sklearn.discriminant_analysis`
 - OLS and ridge predictions against `sklearn.linear_model`
@@ -53,7 +53,7 @@ The custom models remain the primary implementations. Tests compare their behavi
 - The analytic ridge gradient against a centered finite-difference gradient
 - The closed-form ridge solution against `scipy.optimize.minimize`
 
-LDA/QDA predictions agree with scikit-learn on the balanced, equal-prior fixture. An imbalanced boundary-point test documents that valid unbiased covariance estimates can yield different predictions from scikit-learn's normalization.
+The custom LDA uses a pooled within-class covariance normalized by `n - k`, while scikit-learn's `lsqr` LDA covariance uses an `n` denominator. The tests account for that scale difference when comparing fitted covariances. Custom QDA and scikit-learn QDA both use per-class covariances normalized by `n_k - 1`, so their fitted covariances and predictions are compared directly. On the imbalanced boundary-point fixture, the LDA normalization difference changes some predictions; the QDA predictions agree.
 
 The suite also covers nonconsecutive class labels, rank-deficient OLS and zero-penalty ridge inputs, singular QDA covariance behavior, reproducible splits, training-only preprocessing, built-in dataset shapes, and both `(n,)` and `(n, 1)` target forms.
 
@@ -74,7 +74,6 @@ experiments.py        # Train/CV/test evaluation workflows
 reporting.py          # Plot and JSON-output helpers
 run_experiments.py    # Regenerates outputs/
 tests/                # Model, dataset, workflow, reporting, and reference tests
-original/             # Preserved coursework reference materials (unchanged)
 ```
 
 ## Setup

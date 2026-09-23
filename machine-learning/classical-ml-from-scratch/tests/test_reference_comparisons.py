@@ -85,9 +85,8 @@ class DiscriminantReferenceTests(unittest.TestCase):
         np.testing.assert_allclose(priors, sklearn_model.priors_, rtol=1e-12, atol=1e-12)
         np.testing.assert_allclose(means.T, sklearn_model.means_, rtol=1e-12, atol=1e-12)
         for covariance, sklearn_covariance in zip(covariances, sklearn_model.covariance_):
-            scale_factor = 12 / 11
             np.testing.assert_allclose(
-                covariance, sklearn_covariance * scale_factor, rtol=1e-12, atol=1e-12
+                covariance, sklearn_covariance, rtol=1e-12, atol=1e-12
             )
         np.testing.assert_array_equal(custom_predictions, sklearn_predictions)
 
@@ -100,8 +99,6 @@ class DiscriminantReferenceTests(unittest.TestCase):
         )
         classes, means, covariance, priors = lda_model
         qda_classes, qda_means, covariances, qda_priors = qda_model
-        _, counts = np.unique(IMBALANCED_Y, return_counts=True)
-
         np.testing.assert_array_equal(classes, sklearn_lda.classes_)
         np.testing.assert_array_equal(qda_classes, sklearn_qda.classes_)
         np.testing.assert_allclose(means.T, sklearn_lda.means_, rtol=1e-12, atol=1e-12)
@@ -114,9 +111,9 @@ class DiscriminantReferenceTests(unittest.TestCase):
             rtol=1e-12,
             atol=1e-12,
         )
-        for covariance, sklearn_covariance, count in zip(covariances, sklearn_qda.covariance_, counts):
+        for covariance, sklearn_covariance in zip(covariances, sklearn_qda.covariance_):
             np.testing.assert_allclose(
-                covariance, sklearn_covariance * count / (count - 1), rtol=1e-12, atol=1e-12
+                covariance, sklearn_covariance, rtol=1e-12, atol=1e-12
             )
 
         lda_predictions = predict_lda(BOUNDARY_POINTS, *lda_model)
@@ -124,7 +121,7 @@ class DiscriminantReferenceTests(unittest.TestCase):
         sklearn_lda_predictions = sklearn_lda.predict(BOUNDARY_POINTS)
         sklearn_qda_predictions = sklearn_qda.predict(BOUNDARY_POINTS)
         self.assertTrue(np.any(lda_predictions != sklearn_lda_predictions))
-        self.assertTrue(np.any(qda_predictions != sklearn_qda_predictions))
+        np.testing.assert_array_equal(qda_predictions, sklearn_qda_predictions)
 
     def test_custom_qda_reports_singular_covariance(self):
         X = np.array([[0.0, 0.0], [1.0, 1.0], [2.0, 2.0], [5.0, 5.0], [6.0, 6.0], [7.0, 7.0]])
